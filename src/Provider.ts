@@ -298,10 +298,17 @@ export class Provider {
     account: string,
     deserialize = true
   ): Promise<number | string> {
-    const { nonce: nonceBase64url } = await this.call<{ nonce: string }>(
-      "chain.get_account_nonce",
-      { account }
-    );
+    let { nonce: nonceBase64url } = await this.call<{ nonce: string }>(
+      "mempool.get_pending_nonce",
+      { account}
+    )
+
+    if (nonceBase64url.length == 0) {
+      nonceBase64url = (await this.call<{ nonce: string }>(
+        "chain.get_account_nonce",
+        { account }
+      )).nonce;
+    }
 
     if (!deserialize) {
       return nonceBase64url;
