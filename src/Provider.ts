@@ -300,10 +300,10 @@ export class Provider {
   ): Promise<number | string> {
     let { nonce: nonceBase64url } = await this.call<{ nonce: string }>(
       "mempool.get_pending_nonce",
-      { account}
+      { payee: account }
     )
 
-    if (nonceBase64url.length == 0) {
+    if (!nonceBase64url || nonceBase64url.length == 0) {
       nonceBase64url = (await this.call<{ nonce: string }>(
         "chain.get_account_nonce",
         { account }
